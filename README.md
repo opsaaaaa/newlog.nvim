@@ -1,33 +1,79 @@
-# newlog.nvim
+================================================================================
+NEWLOG                                                                  *newlog*
 
-A Neovim plugin that integrates the [newlog](https://github.com/opsaaaaa/newlog) command-line tool, providing a `:Newlog` command to create timestamped markdown files for logging or note-taking directly within Neovim. The plugin wraps the `newlog` tool, passes arguments and flags, and opens the resulting file in a new buffer.
+A Neovim plugin for creating new files with date timestamps and incrementing
+indices to ensure filenames are unique and chronologically sorted.
 
-`:Newlog [path/to/folder] [title]` to create timestamped markdown files (e.g., `25061000.md`).
+Primarily designed for taking daily notes.
 
-## Prerequisites
-- Install the `newlog` command-line tool and ensure its accessible in your `PATH`.
+================================================================================
+5. COMMANDS                                                    *newlog-commands*
 
-## Installation
+*:NewLog* [directory] [title] [extension]
+  Create a new log file.
 
-### lazy.nvim
-Add the following to your `lazy.nvim` configuration:
+*:NL* [directory] [title] [extension]
+  Alias for :NewLog
 
-```lua
-{
-    "opsaaaaa/newlog.nvim",
-    config = function()
-        require("newlog")
-    end,
-}
-```
+*:NLConfig* [option] [value]
+  Configure NewLog options at runtime.
+  Examples:
+  - `:NLConfig extension .txt` - Change default extension
+  - `:NLConfig date_format %Y-%m-%d` - Change date format
+  - `:NLConfig no_title true` - Set no_title option
+  - `:NLConfig` (without arguments) - Display current configuration
 
-## Usage
 
-`:Newlog` Creates ./25061000.md in the current directory and opens it.
 
-`:Newlog log/` Creates log/25061001.md and opens it.
+================================================================================
+2. INSTALLATION                                             *newlog-installation*
 
-`:Newlog log/ "My Title"` Creates log/25061002-my-title.md
+Using lazy.nvim: >lua
+  return {
+    {
+      'opsaaaaa/newlog.nvim',
+      cmd = {"NLConfig", "NL", "NewLog"},
+      config = function()
+        require("newlog").setup({})
+      end
+    },
+  }
+<
 
-`:Newlog --help` for more info.
+================================================================================
+4. CONFIGURATION                                           *newlog-configuration*
+
+Example configuration: >lua
+  require("newlog").setup({
+    extension = ".md",
+    -- File extension for new logs.
+    date_format = "%Y-%m-%d",
+    -- Format for dates in filenames. Uses Lua's os.date() format.
+    filename_template_no_slug = "log-{{ date }}-{{ index }}{{ extension }}",
+    -- Template for filenames when no title is provided.
+    filename_template_with_slug = "{{ date }}-{{ slug }}{{ extension }}",
+    --Template for filenames when a title is provided. 
+    content_template = "# {{ title }}\n\nCreated: {{ date }}\n\n"
+    -- Template for the initial content of the log file.
+  })
+<
+
+================================================================================
+6. TEMPLATES                                                  *newlog-templates*
+
+NewLog uses a simple template system with {{ variable }} placeholders.
+
+Available template variables:
+
+  • date: The formatted date according to date_format
+  • index: Two-digit index number (00, 01, 02, etc.)
+  • extension: File extension including the dot
+  • title: The title provided as argument (empty if none)
+  • slug: URL-friendly version of the title (empty if no title)
+  • underscores: A line of dashes matching the title length (for Markdown)
+
+Example template usage: >lua
+  filename_template_with_slug = "{{ date }}_{{ index }}_{{ slug }}{{ extension }}"
+  content_template = "# {{ title }}\n\nDate: {{ date }}\nFile: {{ slug }}\n\n"
+<
 

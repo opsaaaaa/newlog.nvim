@@ -4,9 +4,9 @@ local M = {}
 M.defaults = {
   extension = ".md",
   date_format = "%y%m%d",
-  filename_slugless_format = "{{ date }}{{ index }}{{ extension }}",
-  filename_with_slug_format = "{{ date }}{{ index }}-{{ slug }}{{ extension }}",
-  no_title = false,
+  filename_template_no_slug = "{{ date }}{{ index }}{{ extension }}",
+  filename_template_with_slug = "{{ date }}{{ index }}-{{ slug }}{{ extension }}",
+  content_template = "{{ title }}\n{{ underscores }}\n\n",
 }
 
 -- Current configuration (will be initialized with defaults and user config)
@@ -94,6 +94,9 @@ function M.create_log(args)
   if args[2] then
     title = args[2]
   end
+  if not title then
+    title = ""
+  end
 
   -- Third arg is extension if provided
   if args[3] then
@@ -110,11 +113,13 @@ function M.create_log(args)
     end
   end
 
+  no_title = false,
   -- Load increment file
   local increment = M.load_increment()
 
   -- Format current date
   local current_date = os.date(M.config.date_format)
+
 
   -- Determine index
   local index
@@ -135,15 +140,17 @@ function M.create_log(args)
     date = current_date,
     index = index_str,
     extension = extension,
-    slug = title and M.slugify(title) or "",
+    title = title,
+    slug = #title > 0 and M.slugify(title) or "",
+    underscores = #title > 0 and string.rep("-", #title) or "",
   }
 
   -- Generate filename using appropriate template
   local filename
-  if title then
-    filename = M.render_template(M.config.filename_with_slug_format, template_data)
+  if #title > 0 then
+    filename = M.render_template(M.config.filename_template_with_slug, template_data)
   else
-    filename = M.render_template(M.config.filename_slugless_format, template_data)
+    filename = M.render_template(M.config.filename_template_no_slug, template_data)
   end
 
   -- Ensure all directories in the path exist
@@ -160,11 +167,9 @@ function M.create_log(args)
     return
   end
 
-  -- Write title and underscores if applicable
-  if title and not M.config.no_title then
-    local underscores = string.rep("-", #title)
-    file:write(title .. "\n" .. underscores .. "\n\n")
-  end
+  file:write(
+    M.render_template(M.config.content_template, template_data)
+  )
 
   file:close()
 
@@ -197,10 +202,10 @@ function M.update_config(args)
 
   if key == "date_format" then
     M.config.date_format = value
-  elseif key == "filename_slugless_format" then
-    M.config.filename_slugless_format = value
-  elseif key == "filename_with_slug_format" then
-    M.config.filename_with_slug_format = value
+  elseif key == "filename_template_no_slug" then
+    M.config.filename_template_no_slug = value
+  elseif key == "filename_template_with_slug" then
+    M.config.filename_template_with_slug = value
   elseif key == "extension" then
     -- Add leading dot if not present
     if not value:match("^%.") then
@@ -229,6 +234,46 @@ function M.complete_dirs(arg_lead, _, _)
   return vim.fn.getcompletion(arg_lead, 'dir')
 end
 
+function M.newlogconfig_cmd_complete(arglead, cmdline, cursorpos)
+  -- Split the command line to determine which argument we're completing
+  local args = vim.split(cmdline, "%s+")
+  local cmd_name = args[1] -- The command name (NLConfig)
+  local num_args = #args - 1 -- Number of arguments (excluding command name)
+
+  -- If we're on the first argument or starting to type it
+  if num_args <= 1 then
+    -- Define your configuration options
+    local options = {
+      "extension", "date_format", "filename_template_no_slug",
+      "filename_template_with_slug", "no_title",
+    }
+
+    local matches = {}
+    for _, option in ipairs(options) do
+      if option:find(arglead, 1, true) then
+        table.insert(matches, option)
+      end
+    end
+
+    return matches
+  -- If we're on the second argument and the first argument is "no_title"
+  elseif num_args == 2 and args[2] == "no_title" then
+    local boolean_options = {"true", "false"}
+    local matches = {}
+
+    for _, option in ipairs(boolean_options) do
+      if option:find(arglead, 1, true) then
+        table.insert(matches, option)
+      end
+    end
+
+    return matches
+  end
+
+  -- For all other cases, return empty list (no suggestions)
+  return {}
+end
+
 -- Setup commands
 function M.setup_commands()
   vim.api.nvim_create_user_command("NewLog", function(opts)
@@ -251,6 +296,7 @@ function M.setup_commands()
     M.update_config(opts.fargs)
   end, {
     nargs = "*",
+    complete = M.newlogconfig_cmd_complete,
     desc = "Update NewLog configuration"
   })
 end
