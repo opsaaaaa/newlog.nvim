@@ -1,0 +1,9 @@
+:NL	newlog.txt	/*:NL*
+:NLConfig	newlog.txt	/*:NLConfig*
+:NewLog	newlog.txt	/*:NewLog*
+newlog	newlog.txt	/*newlog*
+newlog-commands	newlog.txt	/*newlog-commands*
+newlog-configuration	newlog.txt	/*newlog-configuration*
+newlog-installation	newlog.txt	/*newlog-installation*
+newlog-templates	newlog.txt	/*newlog-templates*
+newlog.txt	newlog.txt	/*newlog.txt*
