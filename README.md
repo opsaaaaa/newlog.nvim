@@ -1,13 +1,25 @@
-================================================================================
-NEWLOG                                                                  *newlog*
+# newlog.nvim
 
 A Neovim plugin for creating new files with date timestamps and incrementing
 indices to ensure filenames are unique and chronologically sorted.
 
 Primarily designed for taking daily notes.
 
-================================================================================
-5. COMMANDS                                                    *newlog-commands*
+
+## Example
+```vim
+:NewLog path/to/folder "optional title"
+```
+```markdown
+<!-- path/to/folder/25061000-optional-title.md -->
+
+optional title
+--------------
+
+
+```
+
+## Commands
 
 *:NewLog* [directory] [title] [extension]
   Create a new log file.
@@ -25,10 +37,10 @@ Primarily designed for taking daily notes.
 
 
 
-================================================================================
-2. INSTALLATION                                             *newlog-installation*
+## Installation
 
-Using lazy.nvim: >lua
+Using lazy.nvim:
+```lua
   return {
     {
       'opsaaaaa/newlog.nvim',
@@ -38,12 +50,12 @@ Using lazy.nvim: >lua
       end
     },
   }
-<
+```
 
-================================================================================
-4. CONFIGURATION                                           *newlog-configuration*
+## Configuration
 
-Example configuration: >lua
+Example configuration: 
+```lua
   require("newlog").setup({
     extension = ".md",
     -- File extension for new logs.
@@ -56,10 +68,9 @@ Example configuration: >lua
     content_template = "# {{ title }}\n\nCreated: {{ date }}\n\n"
     -- Template for the initial content of the log file.
   })
-<
+```
 
-================================================================================
-6. TEMPLATES                                                  *newlog-templates*
+## Templates
 
 NewLog uses a simple template system with {{ variable }} placeholders.
 
@@ -72,8 +83,9 @@ Available template variables:
   • slug: URL-friendly version of the title (empty if no title)
   • underscores: A line of dashes matching the title length (for Markdown)
 
-Example template usage: >lua
+Example template usage: 
+```lua
   filename_template_with_slug = "{{ date }}_{{ index }}_{{ slug }}{{ extension }}"
   content_template = "# {{ title }}\n\nDate: {{ date }}\nFile: {{ slug }}\n\n"
-<
+```
 
