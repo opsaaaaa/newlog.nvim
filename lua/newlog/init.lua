@@ -113,7 +113,6 @@ function M.create_log(args)
     end
   end
 
-  no_title = false,
   -- Load increment file
   local increment = M.load_increment()
 
