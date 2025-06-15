@@ -98,7 +98,7 @@ function M.create_log(args)
       extension = last_arg
       -- Title is everything after the directory and before the extension
       if #args > 2 then
-        title = table.concat({table.unpack(args, 2, #args - 1)}, " ")
+        title = table.concat({unpack(args, 2, #args - 1)}, " ")
       else
         title = ""
       end
@@ -109,7 +109,7 @@ function M.create_log(args)
       if not extension:match("^%.") then
         extension = "." .. extension
       end
-      title = table.concat({table.unpack(args, 2, #args)}, " ")
+      title = table.concat({unpack(args, 2, #args)}, " ")
     end
   else
     extension = M.config.extension
