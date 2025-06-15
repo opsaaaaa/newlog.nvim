@@ -5,38 +5,6 @@ indices to ensure filenames are unique and chronologically sorted.
 
 Primarily designed for taking daily notes.
 
-
-## Example
-```vim
-:NewLog path/to/folder "optional title"
-```
-```markdown
-<!-- path/to/folder/25061000-optional-title.md -->
-
-optional title
---------------
-
-
-```
-
-## Commands
-
-*:NewLog* [directory] [title] [extension]
-  Create a new log file.
-
-*:NL* [directory] [title] [extension]
-  Alias for :NewLog
-
-*:NLConfig* [option] [value]
-  Configure NewLog options at runtime.
-  Examples:
-  - `:NLConfig extension .txt` - Change default extension
-  - `:NLConfig date_format %Y-%m-%d` - Change date format
-  - `:NLConfig no_title true` - Set no_title option
-  - `:NLConfig` (without arguments) - Display current configuration
-
-
-
 ## Installation
 
 Using lazy.nvim:
@@ -52,7 +20,35 @@ Using lazy.nvim:
   }
 ```
 
-## Configuration
+## Usage
+
+`:h newlog` for more info.
+
+### Commands
+
+`*:NewLog* [directory] [title] [extension]`
+  Create and edit a new log file.
+  Examples:
+  - `:NewLog log/` > `log/YYMMDD00.md`
+  - `:NewLog . notes about new log` > `./YYMMDD01-notes-about-new-log.md`
+  - `:NewLog log/ .txt` > `log/YYMMDD00.txt`
+  - `:NewLog` > `./YYMMDD00.md`
+  - `:NewLog log/ some title .txt` > `log/YYMMDD00-some-title.txt`
+
+`*:NL* [directory] [title] [extension]`
+  Alias for :NewLog
+
+`*:NLConfig* [option] [value]`
+  Configure NewLog options at runtime.
+  Examples:
+  - `:NLConfig extension .txt` - Change default extension
+  - `:NLConfig date_format %Y-%m-%d` - Change date format
+  - `:NLConfig no_title true` - Set no_title option
+  - `:NLConfig` (without arguments) - Display current configuration
+
+
+
+### Configuration
 
 Example configuration: 
 ```lua
@@ -65,12 +61,12 @@ Example configuration:
     -- Template for filenames when no title is provided.
     filename_template_with_slug = "{{ date }}-{{ slug }}{{ extension }}",
     --Template for filenames when a title is provided. 
-    content_template = "# {{ title }}\n\nCreated: {{ date }}\n\n"
+    content_template = "{{ title }}\n{{ underscores }}\n\n",
     -- Template for the initial content of the log file.
   })
 ```
 
-## Templates
+### Templates
 
 NewLog uses a simple template system with {{ variable }} placeholders.
 

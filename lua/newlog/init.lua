@@ -57,7 +57,7 @@ end
 function M.slugify(title)
   local slug = title:lower()
   slug = slug:gsub("%s+", "-")      -- Replace spaces with hyphens
-  slug = slug:gsub("[^%w%-]", "")   -- Remove non-alphanumeric characters except hyphens
+  slug = slug:gsub("[^%w%-_\\.]", "")   -- Remove non-alphanumeric characters except hyphens
   return slug
 end
 

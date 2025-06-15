@@ -13,6 +13,12 @@ Primarily designed for taking daily notes.
 
 *:NewLog* [directory] [title] [extension]
   Create a new log file.
+  Examples:
+  - `:NewLog log/` > `log/YYMMDD00.md`
+  - `:NewLog . notes about new log` > `./YYMMDD01-notes-about-new-log.md`
+  - `:NewLog log/ .txt` > `log/YYMMDD00.txt`
+  - `:NewLog` > `./YYMMDD00.md`
+  - `:NewLog log/ some title .txt` > `log/YYMMDD00-some-title.txt`
 
 *:NL* [directory] [title] [extension]
   Alias for :NewLog
@@ -55,7 +61,7 @@ Example configuration: >lua
     -- Template for filenames when no title is provided.
     filename_template_with_slug = "{{ date }}-{{ slug }}{{ extension }}",
     --Template for filenames when a title is provided. 
-    content_template = "# {{ title }}\n\nCreated: {{ date }}\n\n"
+    content_template = "{{ title }}\n{{ underscores }}\n\n",
     -- Template for the initial content of the log file.
   })
 <
