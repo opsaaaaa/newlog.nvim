@@ -90,27 +90,34 @@ function M.create_log(args)
     dir_path = "."  -- Default to current directory
   end
 
-  -- Second arg is title if provided
-  if args[2] then
-    title = args[2]
-  end
-  if not title then
-    title = ""
-  end
-
-  -- Third arg is extension if provided
-  if args[3] then
-    extension = args[3]
-    -- Add leading dot if not present
-    if not extension:match("^%.") then
-      extension = "." .. extension
+  -- Handle title and extension based on arguments
+  if #args > 1 then
+    -- Check if the last argument starts with a dot (indicating an extension)
+    local last_arg = args[#args]
+    if last_arg:match("^%.") then
+      extension = last_arg
+      -- Title is everything after the directory and before the extension
+      if #args > 2 then
+        title = table.concat({table.unpack(args, 2, #args - 1)}, " ")
+      else
+        title = ""
+      end
+    else
+      -- Last argument is part of the title, use default extension
+      extension = M.config.extension
+      -- Add leading dot if not present in default extension
+      if not extension:match("^%.") then
+        extension = "." .. extension
+      end
+      title = table.concat({table.unpack(args, 2, #args)}, " ")
     end
   else
     extension = M.config.extension
-    -- Add leading dot if not present
+    -- Add leading dot if not present in default extension
     if not extension:match("^%.") then
       extension = "." .. extension
     end
+    title = ""
   end
 
   -- Load increment file
@@ -118,7 +125,6 @@ function M.create_log(args)
 
   -- Format current date
   local current_date = os.date(M.config.date_format)
-
 
   -- Determine index
   local index
@@ -152,8 +158,7 @@ function M.create_log(args)
     filename = M.render_template(M.config.filename_template_no_slug, template_data)
   end
 
-  -- Ensure all directories in the path exist
-  local full_path = dir_path .. "/" .. filename
+  local full_path = vim.fs.joinpath(dir_path, filename)
   local dir_to_create = vim.fn.fnamemodify(full_path, ":h")
   if vim.fn.isdirectory(dir_to_create) == 0 then
     vim.fn.mkdir(dir_to_create, "p")
@@ -309,4 +314,4 @@ function M.setup(opts)
   M.setup_commands()
 end
 
-return M
+return Meturn M
