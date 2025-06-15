@@ -314,4 +314,4 @@ function M.setup(opts)
   M.setup_commands()
 end
 
-return Meturn M
+return M
