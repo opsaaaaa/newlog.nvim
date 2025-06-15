@@ -26,19 +26,19 @@ Using lazy.nvim:
 
 ### Commands
 
-`*:NewLog* [directory] [title] [extension]`
+`:NewLog [directory] [title] [extension]`
   Create and edit a new log file.
   Examples:
-  - `:NewLog log/` > `log/YYMMDD00.md`
-  - `:NewLog . notes about new log` > `./YYMMDD01-notes-about-new-log.md`
-  - `:NewLog log/ .txt` > `log/YYMMDD00.txt`
-  - `:NewLog` > `./YYMMDD00.md`
-  - `:NewLog log/ some title .txt` > `log/YYMMDD00-some-title.txt`
+  - `:NewLog log/` => `log/YYMMDD00.md`
+  - `:NewLog . notes about new log` => `./YYMMDD01-notes-about-new-log.md`
+  - `:NewLog log/ .txt` => `log/YYMMDD00.txt`
+  - `:NewLog` => `./YYMMDD00.md`
+  - `:NewLog log/ some title .txt` => `log/YYMMDD00-some-title.txt`
 
-`*:NL* [directory] [title] [extension]`
+`:NL [directory] [title] [extension]`
   Alias for :NewLog
 
-`*:NLConfig* [option] [value]`
+`:NLConfig [option] [value]`
   Configure NewLog options at runtime.
   Examples:
   - `:NLConfig extension .txt` - Change default extension
